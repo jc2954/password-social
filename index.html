@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareMind | Secure Password Manager & Vault</title>
+  <meta name="description" content="Secure, shared password management powered by Firebase Authentication. Store, generate, and share team credentials safely.">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Ambient Glow Backgrounds -->
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+  <div class="ambient-glow glow-3"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-logo">
+        <div class="logo-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div class="logo-text">
+          <span class="brand-title">ShareMind</span>
+          <span class="brand-subtitle">Password Social Vault</span>
+        </div>
+      </div>
+      
+      <div class="header-actions">
+        <div class="firebase-badge">
+          <span class="status-dot online"></span>
+          <i class="fa-solid fa-fire text-amber"></i>
+          <span>Firebase Auth</span>
+        </div>
+        
+        <div id="user-header-profile" class="user-profile-header hidden">
+          <div class="user-avatar" id="header-user-avatar">U</div>
+          <span class="user-email-text" id="header-user-email">user@example.com</span>
+          <button id="header-logout-btn" class="btn-icon" title="Sign Out">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-content">
+    
+    <!-- LOGIN VIEW (Shown when unauthenticated) -->
+    <section id="login-view" class="auth-section">
+      <div class="auth-card">
+        <div class="auth-header">
+          <div class="auth-badge">
+            <i class="fa-solid fa-lock"></i>
+            <span>Authorized Access Only</span>
+          </div>
+          <h2>Welcome Back</h2>
+          <p class="auth-desc">Sign in with your Firebase credentials to access your secure password vault.</p>
+          
+          <div class="admin-notice">
+            <i class="fa-solid fa-circle-info"></i>
+            <span>Users are pre-registered in Firebase Console by your administrator.</span>
+          </div>
+        </div>
+
+        <form id="login-form" class="auth-form" novalidate>
+          <div class="form-group">
+            <label for="login-email">Email Address</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-envelope input-icon"></i>
+              <input type="email" id="login-email" placeholder="name@company.com" required autocomplete="email">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="login-password">Password</label>
+              <a href="#" id="forgot-password-link" class="forgot-link">Forgot Password?</a>
+            </div>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-key input-icon"></i>
+              <input type="password" id="login-password" placeholder="••••••••••••" required autocomplete="current-password">
+              <button type="button" id="toggle-password-btn" class="password-toggle-btn" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="form-options">
+            <label class="checkbox-container">
+              <input type="checkbox" id="remember-me-checkbox" checked>
+              <span class="checkmark"></span>
+              <span class="checkbox-label">Keep me signed in</span>
+            </label>
+          </div>
+
+          <button type="submit" id="login-btn" class="btn btn-primary btn-block">
+            <span class="btn-text">Sign In to Vault</span>
+            <i class="fa-solid fa-arrow-right btn-arrow"></i>
+            <span class="spinner hidden"></span>
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- DASHBOARD VIEW (Shown when authenticated) -->
+    <section id="dashboard-view" class="dashboard-section hidden">
+      <!-- Dashboard Top Banner -->
+      <div class="dashboard-banner">
+        <div class="banner-user-info">
+          <div class="dashboard-avatar" id="dash-avatar">U</div>
+          <div class="banner-details">
+            <h1 class="user-greeting">Hello, <span id="dash-user-name">User</span>!</h1>
+            <p class="user-subtext">Signed in as <strong id="dash-user-email">email@example.com</strong></p>
+          </div>
+        </div>
+        <div class="banner-actions">
+          <button id="add-vault-item-btn" class="btn btn-primary">
+            <i class="fa-solid fa-plus"></i>
+            <span>Add Secret</span>
+          </button>
+          <button id="logout-btn" class="btn btn-secondary">
+            <i class="fa-solid fa-right-from-bracket"></i>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Dashboard Grid -->
+      <div class="dashboard-grid">
+        
+        <!-- Column 1: Password Vault List -->
+        <div class="dash-card vault-card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="fa-solid fa-vault text-accent"></i>
+              <h2>Shared Vault</h2>
+              <span class="badge" id="vault-count-badge">0 Items</span>
+            </div>
+            <div class="search-box">
+              <i class="fa-solid fa-magnifying-glass"></i>
+              <input type="text" id="vault-search-input" placeholder="Search passwords or tags...">
+            </div>
+          </div>
+
+          <div class="vault-filter-tabs">
+            <button class="tab-btn active" data-filter="all"><i class="fa-solid fa-globe"></i> All</button>
+            <button class="tab-btn" data-filter="Social"><i class="fa-solid fa-share-nodes"></i> Social</button>
+            <button class="tab-btn" data-filter="Work"><i class="fa-solid fa-briefcase"></i> Work</button>
+            <button class="tab-btn" data-filter="Personal"><i class="fa-solid fa-user"></i> Personal</button>
+          </div>
+
+          <div class="vault-items-container" id="vault-items-list">
+            <!-- Dynamic Vault Items rendering -->
+          </div>
+        </div>
+
+        <!-- Column 2: User Profile, Password Generator & Session -->
+        <div class="dash-sidebar">
+          
+          <!-- Realtime Database User Profile Card -->
+          <div class="dash-card profile-main-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-user-gear text-accent"></i>
+                <h2>User Profile</h2>
+              </div>
+              <div class="card-header-actions">
+                <button id="generate-friends-btn" class="btn btn-secondary btn-sm" title="Generate 5 Friends with same profile fields">
+                  <i class="fa-solid fa-user-plus text-amber"></i>
+                  <span>Add 5 Friends</span>
+                </button>
+                <button id="open-edit-profile-btn" class="btn btn-secondary btn-sm">
+                  <i class="fa-solid fa-pen-to-square"></i>
+                  <span>Edit Profile</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="profile-card-body">
+              <div class="avatar-150-wrapper">
+                <img id="profile-avatar-img" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
+                <span class="age-badge" id="profile-age-badge">Age 28</span>
+              </div>
+
+              <div class="profile-meta-center">
+                <h3 id="profile-name-text" class="profile-fullname">User Name</h3>
+                <p id="profile-email-subtext" class="profile-email-text">user@example.com</p>
+              </div>
+
+              <div class="profile-section-box">
+                <h4 class="section-label"><i class="fa-solid fa-quote-left text-accent"></i> Self Description</h4>
+                <p id="profile-bio-text" class="profile-bio-content">Loading description...</p>
+              </div>
+
+              <div class="profile-section-box">
+                <h4 class="section-label"><i class="fa-solid fa-heart text-rose"></i> Interests</h4>
+                <div id="profile-interests-tags" class="interests-tags-wrapper">
+                  <span class="interest-tag">Digital Privacy</span>
+                </div>
+              </div>
+
+              <!-- Friends Network Section -->
+              <div class="profile-section-box friends-network-box">
+                <div class="section-label-row">
+                  <h4 class="section-label"><i class="fa-solid fa-users text-emerald"></i> Social Friends</h4>
+                  <span id="friends-count-badge" class="badge">0 Friends</span>
+                </div>
+                <div id="friends-list-container" class="friends-list-wrapper">
+                  <p class="empty-friends-text">No friends added yet. Click <strong>"Add 5 Friends"</strong> above!</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generator Card -->
+          <div class="dash-card generator-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-wand-magic-sparkles text-amber"></i>
+                <h2>Generator</h2>
+              </div>
+            </div>
+
+            <div class="generator-body">
+              <div class="password-display-box">
+                <span id="generated-password-text" class="generated-password">Generating...</span>
+                <div class="display-actions">
+                  <button id="refresh-gen-btn" class="btn-icon" title="Regenerate">
+                    <i class="fa-solid fa-rotate-right"></i>
+                  </button>
+                  <button id="copy-gen-btn" class="btn-icon text-accent" title="Copy Password">
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="strength-indicator">
+                <div class="strength-bar-track">
+                  <div class="strength-bar-fill" id="strength-bar"></div>
+                </div>
+                <span class="strength-label" id="strength-text">Strong</span>
+              </div>
+
+              <div class="generator-controls">
+                <div class="control-row">
+                  <label for="gen-length">Length: <span id="gen-length-val">16</span></label>
+                  <input type="range" id="gen-length" min="8" max="40" value="16">
+                </div>
+
+                <div class="checkbox-grid">
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="gen-uppercase" checked>
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">ABC (Uppercase)</span>
+                  </label>
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="gen-lowercase" checked>
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">abc (Lowercase)</span>
+                  </label>
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="gen-numbers" checked>
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">123 (Numbers)</span>
+                  </label>
+                  <label class="checkbox-container">
+                    <input type="checkbox" id="gen-symbols" checked>
+                    <span class="checkmark"></span>
+                    <span class="checkbox-label">!@# (Symbols)</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Firebase Profile Info Card -->
+          <div class="dash-card profile-info-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fa-solid fa-id-card text-emerald"></i>
+                <h2>Firebase Session</h2>
+              </div>
+            </div>
+
+            <div class="profile-details-list">
+              <div class="detail-item">
+                <span class="detail-label">Firebase UID</span>
+                <div class="detail-value-row">
+                  <code id="profile-uid" class="uid-code">loading...</code>
+                  <button id="copy-uid-btn" class="btn-icon btn-sm" title="Copy UID">
+                    <i class="fa-solid fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Email Verification</span>
+                <span id="profile-verified-badge" class="status-pill warning">Unverified</span>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Account Created</span>
+                <span id="profile-created-time" class="detail-value">Loading...</span>
+              </div>
+
+              <div class="detail-item">
+                <span class="detail-label">Last Sign In</span>
+                <span id="profile-last-login" class="detail-value">Loading...</span>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <button id="trigger-reset-dash-btn" class="btn btn-secondary btn-sm btn-block">
+                <i class="fa-solid fa-key"></i>
+                <span>Send Password Reset Email</span>
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- MODAL: FORGOT PASSWORD -->
+  <div id="reset-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Reset Password</h3>
+        <button id="close-reset-modal-btn" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">Enter your account email address below and we'll send you a password reset link from Firebase.</p>
+        <form id="reset-form" novalidate>
+          <div class="form-group">
+            <label for="reset-email">Account Email</label>
+            <div class="input-wrapper">
+              <i class="fa-solid fa-envelope input-icon"></i>
+              <input type="email" id="reset-email" placeholder="name@company.com" required>
+            </div>
+          </div>
+          <button type="submit" id="send-reset-btn" class="btn btn-primary btn-block">
+            <span>Send Reset Instructions</span>
+            <span class="spinner hidden"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: ADD VAULT ITEM -->
+  <div id="add-item-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Add Secret to Vault</h3>
+        <button id="close-add-modal-btn" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="add-item-form" novalidate>
+          <div class="form-group">
+            <label for="item-title">Title / Application</label>
+            <input type="text" id="item-title" placeholder="e.g. GitHub Team Account" required>
+          </div>
+
+          <div class="form-group">
+            <label for="item-category">Category</label>
+            <select id="item-category" required>
+              <option value="Social">Social</option>
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="item-username">Username / Email</label>
+            <input type="text" id="item-username" placeholder="e.g. dev@company.com" required>
+          </div>
+
+          <div class="form-group">
+            <label for="item-password">Password</label>
+            <div class="input-wrapper">
+              <input type="text" id="item-password" placeholder="Enter or paste password" required>
+              <button type="button" id="fill-generated-btn" class="btn-inline" title="Use Generated Password">
+                <i class="fa-solid fa-wand-magic-sparkles"></i> Magic Fill
+              </button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="item-url">Website URL (Optional)</label>
+            <input type="url" id="item-url" placeholder="https://app.example.com">
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block">
+            <span>Save to Vault</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: EDIT PROFILE -->
+  <div id="edit-profile-modal" class="modal-overlay hidden">
+    <div class="modal-card modal-lg">
+      <div class="modal-header">
+        <h3>Edit Realtime Profile</h3>
+        <button id="close-edit-profile-modal-btn" class="btn-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="edit-profile-form" novalidate>
+          
+          <div class="avatar-edit-preview-row">
+            <img id="edit-avatar-preview" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" width="80" height="80" alt="Avatar Preview" class="avatar-preview-img">
+            <div class="form-group flex-1">
+              <label for="edit-avatar-url">150x150 Avatar Picture URL</label>
+              <input type="url" id="edit-avatar-url" placeholder="https://api.dicebear.com/7.x/notionists/svg?seed=user" required>
+            </div>
+          </div>
+
+          <div class="form-row-2col">
+            <div class="form-group">
+              <label for="edit-name">Full Name</label>
+              <input type="text" id="edit-name" placeholder="e.g. Clara Montgomery" required>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-age">Age (18 - 120)</label>
+              <input type="number" id="edit-age" min="18" max="120" placeholder="28" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <div class="label-row">
+              <label for="edit-bio">Self Description (Max 100 words)</label>
+              <span id="bio-word-counter" class="word-counter">0 / 100 words</span>
+            </div>
+            <textarea id="edit-bio" rows="3" placeholder="Share a inspiring, high-taste description of your goals and principles..." required></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="edit-interests">Interests Group (comma-separated)</label>
+            <input type="text" id="edit-interests" placeholder="e.g. Digital Security, Classical Music, Hiking & Nature, Open Source" required>
+          </div>
+
+          <button type="submit" id="save-profile-btn" class="btn btn-primary btn-block">
+            <span>Save Profile to Realtime Database</span>
+            <span class="spinner hidden"></span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: WELCOME PROFILE SHOWCASE -->
+  <div id="welcome-profile-modal" class="modal-overlay hidden">
+    <div class="modal-card modal-lg text-center-modal">
+      <div class="modal-header text-center-header">
+        <div class="welcome-badge-pill">
+          <i class="fa-solid fa-sparkles text-amber"></i>
+          <span>Profile Generated & Verified</span>
+        </div>
+        <h3>Welcome to ShareMind</h3>
+        <p class="modal-desc">Your profile has been created with high-taste attributes and syncs to Realtime Database.</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="welcome-profile-card-body">
+          <div class="avatar-150-wrapper margin-center">
+            <img id="welcome-avatar-img" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
+            <span class="age-badge" id="welcome-age-badge">Age 28</span>
+          </div>
+
+          <div class="profile-meta-center margin-top-sm">
+            <h3 id="welcome-name-text" class="profile-fullname">User Name</h3>
+            <p id="welcome-email-text" class="profile-email-text">user@example.com</p>
+          </div>
+
+          <div class="profile-section-box text-left">
+            <h4 class="section-label"><i class="fa-solid fa-quote-left text-accent"></i> Self Description</h4>
+            <p id="welcome-bio-text" class="profile-bio-content">Loading description...</p>
+          </div>
+
+          <div class="profile-section-box text-left">
+            <h4 class="section-label"><i class="fa-solid fa-heart text-rose"></i> Interests</h4>
+            <div id="welcome-interests-tags" class="interests-tags-wrapper">
+              <span class="interest-tag">Digital Privacy</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="welcome-actions-row">
+          <button id="close-welcome-modal-btn" class="btn btn-primary btn-block">
+            <i class="fa-solid fa-shield-halved"></i>
+            <span>Enter Password Vault</span>
+          </button>
+          <button id="edit-from-welcome-btn" class="btn btn-secondary btn-block">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Customize Profile</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Application Script -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
