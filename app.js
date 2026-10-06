@@ -1,9 +1,9 @@
 // app.js
-import { 
-  loginUser, 
-  logoutUser, 
-  resetPassword, 
-  initAuthStateListener 
+import {
+  loginUser,
+  logoutUser,
+  resetPassword,
+  initAuthStateListener
 } from "./auth.js";
 import {
   generateDefaultProfile,
@@ -52,7 +52,7 @@ const elements = {
   dashUserEmail: document.getElementById("dash-user-email"),
   logoutBtn: document.getElementById("logout-btn"),
   addVaultItemBtn: document.getElementById("add-vault-item-btn"),
-  
+
   // Realtime Database Profile Card Elements
   profileAvatarImg: document.getElementById("profile-avatar-img"),
   profileAgeBadge: document.getElementById("profile-age-badge"),
@@ -199,7 +199,7 @@ function initApp() {
 
 async function handleUserSignedIn(user) {
   currentUser = user;
-  
+
   // Extract user info
   const email = user.email || "User";
   const initial = email.charAt(0).toUpperCase();
@@ -214,9 +214,9 @@ async function handleUserSignedIn(user) {
   elements.profileUid.textContent = user.uid;
   elements.profileVerifiedBadge.textContent = user.emailVerified ? "Verified" : "Unverified";
   elements.profileVerifiedBadge.className = `status-pill ${user.emailVerified ? "success" : "warning"}`;
-  
+
   // Format creation & last login times
-  const creationTime = user.metadata.creationTime 
+  const creationTime = user.metadata.creationTime
     ? new Date(user.metadata.creationTime).toLocaleDateString(undefined, { dateStyle: 'medium' })
     : 'Unknown';
   const lastLoginTime = user.metadata.lastSignInTime
@@ -241,7 +241,8 @@ async function handleUserSignedIn(user) {
 
   // Show Welcome Profile Showcase Modal on Login
   if (elements.welcomeProfileModal) {
-    elements.welcomeProfileModal.classList.remove("hidden");
+    // elements.welcomeProfileModal.classList.remove("hidden");
+    elements.dashboardView.classList.remove("hidden");
   }
 
   // 2. Asynchronously fetch/sync from Realtime Database or LocalStorage
@@ -285,7 +286,7 @@ function handleUserSignedOut() {
     friendsUnsubscribe();
     friendsUnsubscribe = null;
   }
-  
+
   elements.userHeaderProfile.classList.add("hidden");
   elements.dashboardView.classList.add("hidden");
   elements.dashboardView.style.display = "none";
@@ -617,7 +618,7 @@ function setupProfileEventListeners() {
     if (result.success) {
       updateProfileUI(updatedProfileObj);
       elements.editProfileModal.classList.add("hidden");
-      
+
       if (result.warning) {
         showToast("Profile saved locally! (Enable RTDB rules in console to sync online)", "info");
       } else {
@@ -685,10 +686,10 @@ function saveUserVault(uid) {
 
 function renderVaultItems() {
   const query = elements.vaultSearchInput.value.toLowerCase().trim();
-  
+
   const filtered = userVaultItems.filter(item => {
     const matchesCategory = activeCategoryFilter === "all" || item.category === activeCategoryFilter;
-    const matchesQuery = !query || 
+    const matchesQuery = !query ||
       item.title.toLowerCase().includes(query) ||
       item.username.toLowerCase().includes(query) ||
       item.category.toLowerCase().includes(query);
@@ -712,7 +713,7 @@ function renderVaultItems() {
   filtered.forEach(item => {
     const itemCard = document.createElement("div");
     itemCard.className = "vault-item-card";
-    
+
     // Choose icon based on category or domain
     let iconClass = "fa-solid fa-key";
     if (item.category === "Social") iconClass = "fa-solid fa-share-nodes";
@@ -1012,7 +1013,7 @@ function setLoadingState(buttonEl, isLoading) {
 }
 
 function escapeHtml(str) {
-  return str.replace(/[&<>'"]/g, 
+  return str.replace(/[&<>'"]/g,
     tag => ({
       '&': '&amp;',
       '<': '&lt;',

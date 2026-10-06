@@ -1,22 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ShareMind | Secure Password Manager & Vault</title>
-  <meta name="description" content="Secure, shared password management powered by Firebase Authentication. Store, generate, and share team credentials safely.">
-  
+  <meta name="description"
+    content="Secure, shared password management powered by Firebase Authentication. Store, generate, and share team credentials safely.">
+
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
+
   <!-- Stylesheet -->
   <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
   <!-- Ambient Glow Backgrounds -->
   <div class="ambient-glow glow-1"></div>
@@ -32,17 +37,17 @@
         </div>
         <div class="logo-text">
           <span class="brand-title">ShareMind</span>
-          <span class="brand-subtitle">Password Social Vault</span>
+          <span class="brand-subtitle">Social Vault</span>
         </div>
       </div>
-      
+
       <div class="header-actions">
         <div class="firebase-badge">
           <span class="status-dot online"></span>
           <i class="fa-solid fa-fire text-amber"></i>
           <span>Firebase Auth</span>
         </div>
-        
+
         <div id="user-header-profile" class="user-profile-header hidden">
           <div class="user-avatar" id="header-user-avatar">U</div>
           <span class="user-email-text" id="header-user-email">user@example.com</span>
@@ -56,7 +61,7 @@
 
   <!-- Main Container -->
   <main class="main-content">
-    
+
     <!-- LOGIN VIEW (Shown when unauthenticated) -->
     <section id="login-view" class="auth-section">
       <div class="auth-card">
@@ -67,7 +72,7 @@
           </div>
           <h2>Welcome Back</h2>
           <p class="auth-desc">Sign in with your Firebase credentials to access your secure password vault.</p>
-          
+
           <div class="admin-notice">
             <i class="fa-solid fa-circle-info"></i>
             <span>Users are pre-registered in Firebase Console by your administrator.</span>
@@ -90,8 +95,10 @@
             </div>
             <div class="input-wrapper">
               <i class="fa-solid fa-key input-icon"></i>
-              <input type="password" id="login-password" placeholder="••••••••••••" required autocomplete="current-password">
-              <button type="button" id="toggle-password-btn" class="password-toggle-btn" aria-label="Toggle password visibility">
+              <input type="password" id="login-password" placeholder="••••••••••••" required
+                autocomplete="current-password">
+              <button type="button" id="toggle-password-btn" class="password-toggle-btn"
+                aria-label="Toggle password visibility">
                 <i class="fa-solid fa-eye" id="password-toggle-icon"></i>
               </button>
             </div>
@@ -139,7 +146,7 @@
 
       <!-- Dashboard Grid -->
       <div class="dashboard-grid">
-        
+
         <!-- Column 1: Password Vault List -->
         <div class="dash-card vault-card">
           <div class="card-header">
@@ -168,7 +175,7 @@
 
         <!-- Column 2: User Profile, Password Generator & Session -->
         <div class="dash-sidebar">
-          
+
           <!-- Realtime Database User Profile Card -->
           <div class="dash-card profile-main-card">
             <div class="card-header">
@@ -177,7 +184,8 @@
                 <h2>User Profile</h2>
               </div>
               <div class="card-header-actions">
-                <button id="generate-friends-btn" class="btn btn-secondary btn-sm" title="Generate 5 Friends with same profile fields">
+                <button id="generate-friends-btn" class="btn btn-secondary btn-sm"
+                  title="Generate 5 Friends with same profile fields">
                   <i class="fa-solid fa-user-plus text-amber"></i>
                   <span>Add 5 Friends</span>
                 </button>
@@ -190,7 +198,9 @@
 
             <div class="profile-card-body">
               <div class="avatar-150-wrapper">
-                <img id="profile-avatar-img" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
+                <img id="profile-avatar-img"
+                  src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true"
+                  alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
                 <span class="age-badge" id="profile-age-badge">Age 28</span>
               </div>
 
@@ -344,7 +354,8 @@
         <button id="close-reset-modal-btn" class="btn-close">&times;</button>
       </div>
       <div class="modal-body">
-        <p class="modal-desc">Enter your account email address below and we'll send you a password reset link from Firebase.</p>
+        <p class="modal-desc">Enter your account email address below and we'll send you a password reset link from
+          Firebase.</p>
         <form id="reset-form" novalidate>
           <div class="form-group">
             <label for="reset-email">Account Email</label>
@@ -422,12 +433,15 @@
       </div>
       <div class="modal-body">
         <form id="edit-profile-form" novalidate>
-          
+
           <div class="avatar-edit-preview-row">
-            <img id="edit-avatar-preview" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" width="80" height="80" alt="Avatar Preview" class="avatar-preview-img">
+            <img id="edit-avatar-preview"
+              src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" width="80"
+              height="80" alt="Avatar Preview" class="avatar-preview-img">
             <div class="form-group flex-1">
               <label for="edit-avatar-url">150x150 Avatar Picture URL</label>
-              <input type="url" id="edit-avatar-url" placeholder="https://api.dicebear.com/7.x/notionists/svg?seed=user" required>
+              <input type="url" id="edit-avatar-url" placeholder="https://api.dicebear.com/7.x/notionists/svg?seed=user"
+                required>
             </div>
           </div>
 
@@ -436,7 +450,7 @@
               <label for="edit-name">Full Name</label>
               <input type="text" id="edit-name" placeholder="e.g. Clara Montgomery" required>
             </div>
-            
+
             <div class="form-group">
               <label for="edit-age">Age (18 - 120)</label>
               <input type="number" id="edit-age" min="18" max="120" placeholder="28" required>
@@ -448,12 +462,15 @@
               <label for="edit-bio">Self Description (Max 100 words)</label>
               <span id="bio-word-counter" class="word-counter">0 / 100 words</span>
             </div>
-            <textarea id="edit-bio" rows="3" placeholder="Share a inspiring, high-taste description of your goals and principles..." required></textarea>
+            <textarea id="edit-bio" rows="3"
+              placeholder="Share a inspiring, high-taste description of your goals and principles..."
+              required></textarea>
           </div>
 
           <div class="form-group">
             <label for="edit-interests">Interests Group (comma-separated)</label>
-            <input type="text" id="edit-interests" placeholder="e.g. Digital Security, Classical Music, Hiking & Nature, Open Source" required>
+            <input type="text" id="edit-interests"
+              placeholder="e.g. Digital Security, Classical Music, Hiking & Nature, Open Source" required>
           </div>
 
           <button type="submit" id="save-profile-btn" class="btn btn-primary btn-block">
@@ -474,13 +491,16 @@
           <span>Profile Generated & Verified</span>
         </div>
         <h3>Welcome to ShareMind</h3>
-        <p class="modal-desc">Your profile has been created with high-taste attributes and syncs to Realtime Database.</p>
+        <p class="modal-desc">Your profile has been created with high-taste attributes and syncs to Realtime Database.
+        </p>
       </div>
 
       <div class="modal-body">
         <div class="welcome-profile-card-body">
           <div class="avatar-150-wrapper margin-center">
-            <img id="welcome-avatar-img" src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true" alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
+            <img id="welcome-avatar-img"
+              src="https://ui-avatars.com/api/?name=User&size=150&background=6366F1&color=ffffff&bold=true"
+              alt="User Profile Avatar" class="avatar-150-img" width="150" height="150">
             <span class="age-badge" id="welcome-age-badge">Age 28</span>
           </div>
 
@@ -522,4 +542,5 @@
   <!-- Application Script -->
   <script type="module" src="app.js"></script>
 </body>
+
 </html>
